@@ -13,3 +13,4 @@ nix = { version = "0.24", features = ["ioctl", "net"] }
 futures = "0.3"
 serial-line-ip = "0.5"
 termios = "0.3"
+argh = "0.1.7"

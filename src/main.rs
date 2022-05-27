@@ -1,10 +1,11 @@
 #![deny(warnings)]
 
+use anyhow::Error;
+use argh::FromArgs;
 ///! slipv6
 ///
 /// Because sometimes you made a mistake...
-use anyhow::Error;
-
+use std::path::PathBuf;
 use tokio::io::AsyncWriteExt;
 
 use serial_line_ip as slip;
@@ -17,8 +18,24 @@ use async_serial::AsyncSerial;
 use async_tun::AsyncTun;
 use tun::Tun;
 
+#[derive(FromArgs)]
+/// Forward an IPv6 Address range over a serial connection to a 6LowPan border router.
+struct Slipv6Args {
+    /// the PAN of the 6LowPan network.
+    #[argh(option)]
+    pan_id: String,
+    /// the serial port.
+    #[argh(option)]
+    port: PathBuf,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+    let args: Slipv6Args = argh::from_env();
+
+    eprintln!("pan id: {}", args.pan_id);
+    eprintln!("port: {:?}", args.port);
+
     let mut tun = AsyncTun::new(Tun::new("slip")?)?;
 
     let serial_port = std::fs::OpenOptions::new()
